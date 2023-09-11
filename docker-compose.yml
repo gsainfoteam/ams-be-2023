@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  local-db:
+    image: library/mysql:5.7
+    container_name: local-db
+    restart: always
+    ports:
+      - 3306:3306              # 호스트 포트:컨테이너 포트
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234  # root 계정 비밀번호
+      TZ: Asia/Seoul             # 타임존
+    volumes:
+      - ./db/mysql/data:/var/lib/mysql  # 데이터베이스 파일 저장 위치
+      - ./db/mysql/init:/docker-entrypoint-initdb.d  # 초기화 SQL 파일 위치
