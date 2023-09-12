@@ -17,9 +17,6 @@ export class User {
   @Column()
   userEmailId: string;
 
-  @Column()
-  userConsent: boolean;
-
   @CreateDateColumn()
   createdAt: Date;
 }
