@@ -3,7 +3,12 @@ import { ConfigService } from '@nestjs/config';
 import { TypeOrmOptionsFactory } from '@nestjs/typeorm';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm/dist';
 import { ApplicationForm } from 'src/application-form/application-form.entity';
+import { NoticeBlock } from 'src/notice-block/notice-block.entity';
 import { Project } from 'src/projects/project.entity';
+import { QuestionChoiceBlock } from 'src/question-choice-block/question-choice-block.entity';
+import { QuestionLongBlock } from 'src/question-long-block/question-long-block.entity';
+import { QuestionShortBlock } from 'src/question-short-block/question-short-block.entity';
+import { TextBlock } from 'src/text-block/text-block.entity';
 
 @Injectable()
 export class MySQLConfigService implements TypeOrmOptionsFactory {
@@ -21,7 +26,7 @@ export class MySQLConfigService implements TypeOrmOptionsFactory {
       port: 3306,
       host: 'localhost',
       database: 'ams-test',
-      entities: [Project,ApplicationForm],
+      entities: [Project,ApplicationForm,QuestionChoiceBlock,QuestionShortBlock, QuestionLongBlock, TextBlock, NoticeBlock],
       synchronize: true,
     };
   }

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, NotFoundException } from '@nestjs/common';
 import { ApplicationFormService } from './application-form.service';
 import { ApplicationForm } from './application-form.entity';
 
@@ -29,5 +29,17 @@ export class ApplicationFormController {
     @Delete(':uuid')
     remove(@Param('uuid') uuid: string): Promise<void> {
         return this.service.remove(uuid);
+    }
+
+    @Put(':uuid/create-with-blocks')
+    async createWithBlocks(
+        @Param('uuid') uuid: string,
+        @Body('blockNames') blockNames: string[]
+    ): Promise<ApplicationForm> {
+        const appForm = await this.service.findOne(uuid);
+        if (!appForm) {
+            throw new NotFoundException(`ApplicationForm with UUID ${uuid} not found`);
+        }
+        return this.service.createWithBlocks(uuid, blockNames);
     }
 }
