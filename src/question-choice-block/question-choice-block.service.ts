@@ -12,9 +12,11 @@ export class QuestionChoiceBlockService {
 
     async createAndReturnUUID(): Promise<string> {
         const questionChoiceBlock = new QuestionChoiceBlock();
+        questionChoiceBlock.choice_case = [];
+        questionChoiceBlock.answer_id = [];
         const savedBlock = await this.questionChoiceBlockRepository.save(questionChoiceBlock);
         return savedBlock.choice_question_uuid;
-    }
+    }    
 
     async remove(uuid: string): Promise<void> {
         await this.questionChoiceBlockRepository.delete(uuid);

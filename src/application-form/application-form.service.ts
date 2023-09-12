@@ -58,11 +58,8 @@ export class ApplicationFormService {
 
     async remove(uuid: string): Promise<void> {
         const applicationForm = await this.findOne(uuid);
-
-        if (applicationForm && applicationForm.block_id) {
-            const blockIdArray: [string, string][] = JSON.parse(applicationForm.block_id);
-
-            for (const [blockType, blockUuid] of blockIdArray) {
+        if (applicationForm && applicationForm.block_id) {    
+            for (const [blockType, blockUuid] of applicationForm.block_id) {
                 switch (blockType) {
                     case 'text_block':
                         await this.textBlockService.remove(blockUuid);
@@ -82,12 +79,13 @@ export class ApplicationFormService {
                 }
             }
         }
-
+    
         const deleteResult = await this.applicationFormRepository.delete(uuid);
         if (deleteResult.affected === 0) {
             throw new NotFoundException(`ApplicationForm with UUID ${uuid} not found`);
         }
     }
+    
 
     async createWithBlocks(uuid: string, blockNames: string[]): Promise<ApplicationForm> {
         const appForm = await this.findOne(uuid);
