@@ -5,6 +5,6 @@ export class ApplicationForm {
     @PrimaryGeneratedColumn('uuid')
     application_uuid: string;
 
-    @Column('text', { array: true })
-    block_id: string[];
+    @Column()
+    block_id: string;
 }

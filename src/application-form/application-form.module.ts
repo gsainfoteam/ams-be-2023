@@ -6,6 +6,7 @@ import { ApplicationForm } from './application-form.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([ApplicationForm])],
+  exports: [ApplicationFormService],
   providers: [ApplicationFormService],
   controllers: [ApplicationFormController],
 })

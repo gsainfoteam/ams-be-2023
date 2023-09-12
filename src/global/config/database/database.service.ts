@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmOptionsFactory } from '@nestjs/typeorm';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm/dist';
+import { ApplicationForm } from 'src/application-form/application-form.entity';
 import { Project } from 'src/projects/project.entity';
 
 @Injectable()
@@ -16,11 +17,11 @@ export class MySQLConfigService implements TypeOrmOptionsFactory {
       //host: this.configService.get<string>('MYSQL_DATABASE_HOST'),
       //database: this.configService.get<string>('MYSQL_DATABASE_NAME'),
       username: 'root',
-      password: '1234',
+      password: 'kim00714',
       port: 3306,
       host: 'localhost',
       database: 'ams-test',
-      entities: [Project],
+      entities: [Project,ApplicationForm],
       synchronize: true,
     };
   }

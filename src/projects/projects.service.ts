@@ -2,12 +2,14 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Between, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { Project } from './project.entity';
+import { ApplicationFormService } from 'src/application-form/application-form.service';
 
 @Injectable()
 export class ProjectsService {
     constructor(
       @InjectRepository(Project)
       private projectsRepository: Repository<Project>,
+      private readonly applicationFormService: ApplicationFormService,
     ) {}
         
     async getProjectsByDateRange(startDate: Date, endDate: Date): Promise<Project[]> {
@@ -46,12 +48,16 @@ export class ProjectsService {
     }
 
     async createProject(projectData: Partial<Project>): Promise<Project> {
+        const applicationForm = await this.applicationFormService.create({ block_id: JSON.stringify([]) });
+        
+        projectData.application_uuid = applicationForm.application_uuid;
+    
         if (projectData.admin_uuid) {
-          projectData.admin_uuid = JSON.stringify(projectData.admin_uuid);
+            projectData.admin_uuid = JSON.stringify(projectData.admin_uuid);
         }
         const project = this.projectsRepository.create(projectData);
         return await this.projectsRepository.save(project);
-      }
+    }
     
     async updateProject(uuid: string, projectData: Partial<Project>): Promise<Project> {
         if (projectData.admin_uuid) {
