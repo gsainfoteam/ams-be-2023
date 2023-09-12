@@ -16,6 +16,14 @@ export class NoticeBlockService {
         return savedBlock.notice_uuid;
     }
 
+    async findOne(uuid: string): Promise<NoticeBlock> {
+        const noticeBlock = await this.noticeBlockRepository.findOne({where : {notice_uuid : uuid}});
+        if (!noticeBlock) {
+            throw new NotFoundException(`NoticeBlock with UUID ${uuid} not found`);
+        }
+        return noticeBlock;
+    }    
+
     async update(uuid: string, data: Partial<NoticeBlock>): Promise<NoticeBlock> {
         const existingBlock = await this.noticeBlockRepository.findOne({where : {notice_uuid : uuid}});
         if (!existingBlock) {

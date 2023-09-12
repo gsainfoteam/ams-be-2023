@@ -16,6 +16,14 @@ export class QuestionLongBlockService {
         return savedBlock.long_question_uuid;
     }
 
+    async findOne(uuid: string): Promise<QuestionLongBlock> {
+        const questionLongBlock = await this.questionLongBlockRepository.findOne({where : {long_question_uuid : uuid}});
+        if (!questionLongBlock) {
+            throw new NotFoundException(`QuestionLongBlock with UUID ${uuid} not found`);
+        }
+        return questionLongBlock;
+    }    
+
     async update(uuid: string, data: Partial<QuestionLongBlock>): Promise<QuestionLongBlock> {
         const existingBlock = await this.questionLongBlockRepository.findOne({where : {long_question_uuid : uuid}});
         if (!existingBlock) {

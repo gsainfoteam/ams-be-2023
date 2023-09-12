@@ -121,4 +121,44 @@ export class ApplicationFormService {
         appForm.block_id = JSON.stringify(blockIdArray);
         return await this.applicationFormRepository.save(appForm);
     }
+
+    async findDetailedOne(uuid: string): Promise<any> {
+        const applicationForm = await this.findOne(uuid);
+        if (!applicationForm) {
+            throw new NotFoundException(`ApplicationForm with UUID ${uuid} not found`);
+        }
+    
+        const detailedBlocks = [];
+    
+        for (const [blockType, blockUuid] of applicationForm.block_id) {
+            let blockDetail;
+            switch (blockType) {
+                case 'text_block':
+                    blockDetail = await this.textBlockService.findOne(blockUuid);
+                    break;
+                case 'notice_block':
+                    blockDetail = await this.noticeBlockService.findOne(blockUuid);
+                    break;
+                case 'question_choice_block':
+                    blockDetail = await this.questionChoiceBlockService.findOne(blockUuid);
+                    break;
+                case 'question_short_block':
+                    blockDetail = await this.questionShortBlockService.findOne(blockUuid);
+                    break;
+                case 'question_long_block':
+                    blockDetail = await this.questionLongBlockService.findOne(blockUuid);
+                    break;
+            }
+            detailedBlocks.push({
+                blockType,
+                blockDetail
+            });
+        }
+    
+        return {
+            applicationForm,
+            blocks: detailedBlocks
+        };
+    }
+    
 }

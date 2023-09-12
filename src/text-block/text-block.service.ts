@@ -16,6 +16,15 @@ export class TextBlockService {
         return savedBlock.text_uuid;
     }
 
+    async findOne(uuid: string): Promise<TextBlock> {
+        const textBlock = await this.textBlockRepository.findOne({where : {text_uuid : uuid}});
+        if (!textBlock) {
+            throw new NotFoundException(`TextBlock with UUID ${uuid} not found`);
+        }
+        return textBlock;
+    }
+    
+
     async update(uuid: string, data: Partial<TextBlock>): Promise<TextBlock> {
         const existingBlock = await this.textBlockRepository.findOne({where : {text_uuid : uuid}});
         if (!existingBlock) {

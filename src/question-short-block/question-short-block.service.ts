@@ -16,6 +16,15 @@ export class QuestionShortBlockService {
         return savedBlock.short_question_uuid;
     }
 
+    async findOne(uuid: string): Promise<QuestionShortBlock> {
+        const questionShortBlock = await this.questionShortBlockRepository.findOne({where : {short_question_uuid:uuid}});
+        if (!questionShortBlock) {
+            throw new NotFoundException(`QuestionShortBlock with UUID ${uuid} not found`);
+        }
+        return questionShortBlock;
+    }
+    
+
     async update(uuid: string, data: Partial<QuestionShortBlock>): Promise<QuestionShortBlock> {
         const existingBlock = await this.questionShortBlockRepository.findOne({where : {short_question_uuid:uuid}});
         if (!existingBlock) {

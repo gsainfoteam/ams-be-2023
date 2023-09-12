@@ -18,6 +18,15 @@ export class QuestionChoiceBlockService {
         return savedBlock.choice_question_uuid;
     }    
 
+    async findOne(uuid: string): Promise<QuestionChoiceBlock> {
+        const questionChoiceBlock = await this.questionChoiceBlockRepository.findOne({where : {choice_question_uuid : uuid}});
+        if (!questionChoiceBlock) {
+            throw new NotFoundException(`QuestionChoiceBlock with UUID ${uuid} not found`);
+        }
+        return questionChoiceBlock;
+    }
+    
+
     async update(uuid: string, data: Partial<QuestionChoiceBlock>): Promise<QuestionChoiceBlock> {
         const existingBlock = await this.questionChoiceBlockRepository.findOne({where : {choice_question_uuid : uuid}});
         if (!existingBlock) {

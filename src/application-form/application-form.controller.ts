@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Put, Delete, Param, Body, NotFoundException } from '@nestjs/common';
 import { ApplicationFormService } from './application-form.service';
 import { ApplicationForm } from './application-form.entity';
+import { TextBlock } from 'src/text-block/text-block.entity';
 
 @Controller('application-form')
 export class ApplicationFormController {
@@ -19,6 +20,11 @@ export class ApplicationFormController {
     @Get(':uuid')
     findOne(@Param('uuid') uuid: string): Promise<ApplicationForm> {
         return this.service.findOne(uuid);
+    }
+
+    @Get(':uuid/detail')
+    async findOneDetail(@Param('uuid') uuid: string): Promise<TextBlock> {
+        return this.service.findDetailedOne(uuid);
     }
 
     @Put(':uuid')
