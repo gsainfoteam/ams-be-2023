@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QuestionChoiceBlock } from './question-choice-block.entity';
 import { Repository } from 'typeorm';
@@ -17,6 +17,15 @@ export class QuestionChoiceBlockService {
         const savedBlock = await this.questionChoiceBlockRepository.save(questionChoiceBlock);
         return savedBlock.choice_question_uuid;
     }    
+
+    async update(uuid: string, data: Partial<QuestionChoiceBlock>): Promise<QuestionChoiceBlock> {
+        const existingBlock = await this.questionChoiceBlockRepository.findOne({where : {choice_question_uuid : uuid}});
+        if (!existingBlock) {
+            throw new NotFoundException(`QuestionChoiceBlock with UUID ${uuid} not found`);
+        }
+        const updatedBlock = Object.assign(existingBlock, data);
+        return await this.questionChoiceBlockRepository.save(updatedBlock);
+    }
 
     async remove(uuid: string): Promise<void> {
         await this.questionChoiceBlockRepository.delete(uuid);

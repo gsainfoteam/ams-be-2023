@@ -22,7 +22,7 @@ export class MySQLConfigService implements TypeOrmOptionsFactory {
       //host: this.configService.get<string>('MYSQL_DATABASE_HOST'),
       //database: this.configService.get<string>('MYSQL_DATABASE_NAME'),
       username: 'root',
-      password: 'kim00714',
+      password: '1234',
       port: 3306,
       host: 'localhost',
       database: 'ams-test',

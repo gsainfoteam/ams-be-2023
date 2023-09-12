@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QuestionShortBlock } from './question-short-block.entity';
 import { Repository } from 'typeorm';
@@ -14,6 +14,15 @@ export class QuestionShortBlockService {
         const questionShortBlock = new QuestionShortBlock();
         const savedBlock = await this.questionShortBlockRepository.save(questionShortBlock);
         return savedBlock.short_question_uuid;
+    }
+
+    async update(uuid: string, data: Partial<QuestionShortBlock>): Promise<QuestionShortBlock> {
+        const existingBlock = await this.questionShortBlockRepository.findOne({where : {short_question_uuid:uuid}});
+        if (!existingBlock) {
+            throw new NotFoundException(`QuestionShortBlock with UUID ${uuid} not found`);
+        }
+        const updatedBlock = Object.assign(existingBlock, data);
+        return await this.questionShortBlockRepository.save(updatedBlock);
     }
 
     async remove(uuid: string): Promise<void> {
