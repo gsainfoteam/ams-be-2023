@@ -10,6 +10,7 @@ import { NoticeBlockModule } from './notice-block/notice-block.module';
 import { QuestionChoiceBlockModule } from './question-choice-block/question-choice-block.module';
 import { QuestionShortBlockModule } from './question-short-block/question-short-block.module';
 import { QuestionLongBlockModule } from './question-long-block/question-long-block.module';
+import { AnswerModule } from './answer/answer.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { QuestionLongBlockModule } from './question-long-block/question-long-blo
     QuestionChoiceBlockModule,
     QuestionShortBlockModule,
     QuestionLongBlockModule,
+    AnswerModule,
   ],
 })
 export class AppModule {}

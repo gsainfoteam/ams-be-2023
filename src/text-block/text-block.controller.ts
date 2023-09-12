@@ -6,6 +6,7 @@ import { TextBlock } from './text-block.entity';
 export class TextBlockController {
     constructor(private readonly service: TextBlockService) {}
 
+    // text block 수정
     @Put(':uuid')
     update(@Param('uuid') uuid: string, @Body() data: Partial<TextBlock>): Promise<TextBlock> {
         return this.service.update(uuid, data);

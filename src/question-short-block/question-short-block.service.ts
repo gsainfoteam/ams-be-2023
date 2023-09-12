@@ -2,12 +2,15 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QuestionShortBlock } from './question-short-block.entity';
 import { Repository } from 'typeorm';
+import { Answer } from 'src/answer/answer.entity';
+import { AnswerService } from 'src/answer/answer.service';
 
 @Injectable()
 export class QuestionShortBlockService {
     constructor(
       @InjectRepository(QuestionShortBlock)
       private questionShortBlockRepository: Repository<QuestionShortBlock>,
+      private readonly answerService: AnswerService 
     ) {}
 
     async createAndReturnUUID(): Promise<string> {
@@ -36,5 +39,13 @@ export class QuestionShortBlockService {
 
     async remove(uuid: string): Promise<void> {
         await this.questionShortBlockRepository.delete(uuid);
+    }
+
+    async getAnswersForQuestion(uuid: string): Promise<Answer[]> {
+        const question = await this.findOne(uuid);
+        if (!question.answer_id || question.answer_id.length === 0) {
+            return [];
+        }
+        return this.answerService.findByIds(question.answer_id);
     }
 }

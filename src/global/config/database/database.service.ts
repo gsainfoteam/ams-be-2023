@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmOptionsFactory } from '@nestjs/typeorm';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm/dist';
+import { Answer } from 'src/answer/answer.entity';
 import { ApplicationForm } from 'src/application-form/application-form.entity';
 import { NoticeBlock } from 'src/notice-block/notice-block.entity';
 import { Project } from 'src/projects/project.entity';
@@ -16,17 +17,14 @@ export class MySQLConfigService implements TypeOrmOptionsFactory {
   createTypeOrmOptions(): TypeOrmModuleOptions {
     return {
       type: 'mysql',
-      //username: this.configService.get<string>('MYSQL_DATABASE_USER'),
-      //password: this.configService.get<string>('MYSQL_DATABASE_PASSWORD'),
-      //port: this.configService.get<number>('MYSQL_DATABASE_PORT'),
-      //host: this.configService.get<string>('MYSQL_DATABASE_HOST'),
-      //database: this.configService.get<string>('MYSQL_DATABASE_NAME'),
-      username: 'root',
-      password: '1234',
-      port: 3306,
-      host: 'localhost',
-      database: 'ams-test',
-      entities: [Project,ApplicationForm,QuestionChoiceBlock,QuestionShortBlock, QuestionLongBlock, TextBlock, NoticeBlock],
+      username: this.configService.get<string>('MYSQL_DATABASE_USER'),
+      password: this.configService.get<string>('MYSQL_DATABASE_PASSWORD'),
+      port: this.configService.get<number>('MYSQL_DATABASE_PORT'),
+      host: this.configService.get<string>('MYSQL_DATABASE_HOST'),
+      database: this.configService.get<string>('MYSQL_DATABASE_NAME'),
+      entities: [Project,ApplicationForm,
+        QuestionChoiceBlock,QuestionShortBlock, QuestionLongBlock, TextBlock, NoticeBlock,
+        Answer],
       synchronize: true,
     };
   }

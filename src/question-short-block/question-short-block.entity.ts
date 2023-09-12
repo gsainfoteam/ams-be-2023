@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert } from 'typeorm';
 
 @Entity('question_short_block')
 export class QuestionShortBlock {
@@ -8,9 +8,16 @@ export class QuestionShortBlock {
     @Column({ default: '' })
     short_question: string;
 
-    @Column()
+    @Column({ default: 0 })
     limit: number;
 
-    @Column('json')
+    @Column('json', { nullable: true })
     answer_id: string[];
+
+    @BeforeInsert()
+    setDefaultAnswerId() {
+        if (!this.answer_id) {
+            this.answer_id = [];
+        }
+    }
 }
