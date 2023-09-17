@@ -6,7 +6,8 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post('login')
-  async loginByIdP(@Query('authCode') authCode: string) {
-    return await this.userService.loginByIdP(authCode);
+  async loginByIdP(@Query('authCode') authCode: string): Promise<any> {
+    await this.userService.loginByIdP(authCode);
+    return { message: 'login success' };
   }
 }
