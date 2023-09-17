@@ -3,20 +3,20 @@ import { Column, CreateDateColumn, Entity, PrimaryColumn } from 'typeorm';
 @Entity()
 export class User {
   @PrimaryColumn()
-  userUuid: string;
+  user_uuid: string;
 
   @Column()
-  userName: string;
+  user_name: string;
 
   @Column()
-  userPhoneNumber: string;
+  user_phone_number: string;
 
   @Column()
-  studentNumber: string;
+  student_number: string;
 
   @Column()
-  userEmailId: string;
+  user_email_id: string;
 
   @CreateDateColumn()
-  createdAt: Date;
+  created_at: Date;
 }
