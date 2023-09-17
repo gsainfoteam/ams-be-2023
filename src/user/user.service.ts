@@ -9,6 +9,7 @@ import { catchError, firstValueFrom } from 'rxjs';
 import { HttpService } from '@nestjs/axios';
 import { AxiosError } from 'axios';
 import { DataSource, EntityManager } from 'typeorm';
+import { IdpTokenResponse, UserInfo } from './type/user.type';
 
 @Injectable()
 export class UserService {
@@ -19,32 +20,30 @@ export class UserService {
     private httpService: HttpService,
     private dataSource: DataSource,
   ) {
-    this.idpUrl = this.configService.get<string>('IDP_PROD_URL')!;
+    this.idpUrl = this.configService.get<string>('IDP_URL')!;
   }
 
-  async loginByIdP(authCode: string) {
-    return await this.dataSource.transaction(
-      async (entity_manager: EntityManager) => {
-        const tokens = await this.getTokensFromIdP(authCode);
-        const userInfo = await this.getUserInfoFromIdP(tokens.access_token);
+  async loginByIdP(authCode: string): Promise<void> {
+    await this.dataSource.transaction(async (entityManager: EntityManager) => {
+      const tokens = await this.getTokensFromIdP(authCode);
+      const userInfo = await this.getUserInfoFromIdP(tokens.access_token);
 
-        const user = await this.userRepository.findUserByUuid(
-          entity_manager,
-          userInfo.user_uuid,
-        );
+      const user = await this.userRepository.findUserByUuid(
+        entityManager,
+        userInfo.user_uuid,
+      );
 
-        if (!user) {
-          await this.userRepository.registerUser(entity_manager, userInfo);
-        }
-      },
-    );
+      if (!user) {
+        await this.userRepository.registerUser(entityManager, userInfo);
+      }
+    });
   }
 
   async getTokensFromIdP(authCode: string) {
     const url = this.idpUrl + '/token';
     const tokenResponse = await firstValueFrom(
       this.httpService
-        .post(
+        .post<IdpTokenResponse>(
           url,
           {
             code: authCode,
@@ -72,18 +71,20 @@ export class UserService {
     return tokenResponse.data;
   }
 
-  async getUserInfoFromIdP(accessToken: string) {
+  async getUserInfoFromIdP(accessToken: string): Promise<UserInfo> {
     const url = this.idpUrl + '/userinfo';
 
     const userInfo = await firstValueFrom(
-      this.httpService.get(url, { params: { access_token: accessToken } }).pipe(
-        catchError((err: AxiosError) => {
-          if (err.response?.status === 401) {
-            throw new UnauthorizedException('Invalid access');
-          }
-          throw new InternalServerErrorException('network error');
-        }),
-      ),
+      this.httpService
+        .get<UserInfo>(url, { params: { access_token: accessToken } })
+        .pipe(
+          catchError((err: AxiosError) => {
+            if (err.response?.status === 401) {
+              throw new UnauthorizedException('Invalid access');
+            }
+            throw new InternalServerErrorException('network error');
+          }),
+        ),
     );
 
     return userInfo.data;
