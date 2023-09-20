@@ -30,9 +30,4 @@ export class ProjectController {
     async deleteProject(@Param('projectUuid') projectUuid: string) {
         return await this.projectService.deleteProject(projectUuid);
     }
-
-    @Get(':projectUuid/adminUsers')
-    async getAdminUsersOfProject(@Param('projectUuid') projectUuid: string) {
-        return await this.projectService.getAdminUsersOfProject(projectUuid);
-    }
 }

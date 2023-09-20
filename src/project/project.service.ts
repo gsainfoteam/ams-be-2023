@@ -1,48 +1,42 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In, LessThanOrEqual } from 'typeorm';
+import { ProjectRepository } from './project.repository';
 import { Project } from './project.entity';
 import { User } from '../user/user.entity';
+import { EntityManager, In, LessThanOrEqual, Repository } from 'typeorm';
+
 
 @Injectable()
 export class ProjectService {
     constructor(
-        @InjectRepository(Project)
-        private readonly projectRepository: Repository<Project>,
-        @InjectRepository(User)
-        private readonly userRepository: Repository<User>
+        private readonly projectRepository: ProjectRepository,
+        private readonly _manager: EntityManager
     ) {}
 
     async createProject(data: any): Promise<Project> {
-        let project: Project;
-        const created = this.projectRepository.create(data);
-        if (Array.isArray(created)) {
-            project = created[0];
-        } else {
-            project = created;
-        }
+        let project = await this.projectRepository.createProject(data);
     
         if (data.admin_uuids && data.admin_uuids.length > 0) {
-            project.admin_users = await this.userRepository.findBy({
-                user_uuid: In(data.admin_uuids)
+            project.admin_users = await this._manager.find(User, {
+                where: { user_uuid: In(data.admin_uuids) }
             });
+            project = await this.projectRepository.createProject(project);  // 변경된 내용을 데이터베이스에 저장
         }
-        return await this.projectRepository.save(project);
+        return project;
     }
     
-
+    
     async getProject(projectUuid: string): Promise<Project> {
-        const project = await this.projectRepository.findOne({ where: { project_uuid: projectUuid } });
+        const project = await this.projectRepository.getProject(projectUuid);
         if (!project) throw new NotFoundException('Project not found.');
         return project;
     }
 
     async getProjectsWithinDate(date: Date): Promise<Project[]> {
-        return await this.projectRepository.find({ where: { start_date: LessThanOrEqual(date), end_date: GreaterThanOrEqual(date) } });
+        return await this.projectRepository.getProjectsWithinDate(date);
     }
 
     async updateProject(projectUuid: string, data: any): Promise<Project> {
-        const project = await this.projectRepository.findOne({ where: { project_uuid: projectUuid } });
+        const project = await this.projectRepository.getProject(projectUuid);
         if (!project) throw new NotFoundException('Project not found.');
         if (data.title !== undefined) {
             project.title = data.title;
@@ -50,23 +44,10 @@ export class ProjectService {
         if (data.block_uuid && Array.isArray(data.block_uuid)) {
             project.block_uuid = data.block_uuid;
         }
-        return await this.projectRepository.save(project);
+        return await this.projectRepository.createProject(project);
     }
+
     async deleteProject(projectUuid: string): Promise<void> {
-        const result = await this.projectRepository.delete(projectUuid);
-        if (result.affected === 0) throw new NotFoundException('Project not found.');
-    }
-
-    async getAdminUsersOfProject(projectUuid: string): Promise<User[]> {
-        const project = await this.projectRepository.findOne({
-            where: { project_uuid: projectUuid },
-            relations: ['admin_users']
-        });
-        if (!project) throw new NotFoundException('Project not found.');
-        return project.admin_users;
+        await this.projectRepository.deleteProject(projectUuid);
     }
 }
-function GreaterThanOrEqual(date: Date): Date | import("typeorm").FindOperator<Date> | undefined {
-    throw new Error('Function not implemented.');
-}
-
