@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { EntityManager, LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { EntityManager, In, LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
 import { Project } from './project.entity';
 import { User } from '../user/user.entity';
 
@@ -32,14 +32,14 @@ export class ProjectRepository {
         await this.projectManager.delete(Project, projectUuid);
     }
 
-    async getAdminUsersOfProject(projectUuid: string): Promise<User[]> {
-        const project = await this.projectManager.findOne(Project, {
-            where: { project_uuid: projectUuid },
-            relations: ['admin_users']
+    async addAdminUsersToProject(project: Project, adminUuids: string[]): Promise<Project> {
+        const adminUsers = await this.projectManager.find(User, {
+            where: { user_uuid: In(adminUuids) }
         });
-        if (!project) {
-            throw new Error('Project not found.');
+        if (adminUsers.length !== adminUuids.length) {
+            throw new NotFoundException('Some admin users not found.');
         }
-        return project.admin_users;
+        project.admin_users = adminUsers;
+        return await this.projectManager.save(Project, project);
     }
 }

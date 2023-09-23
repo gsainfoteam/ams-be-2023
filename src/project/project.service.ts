@@ -1,27 +1,23 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { ProjectRepository } from './project.repository';
 import { Project } from './project.entity';
-import { User } from '../user/user.entity';
-import { EntityManager, In, LessThanOrEqual, Repository } from 'typeorm';
 import { CreateProjectDto } from './dto/createProject.dto';
 import { UpdateProjectDto } from './dto/updateProject.dto';
 
 @Injectable()
 export class ProjectService {
     constructor(
-        private readonly projectRepository: ProjectRepository,
-        private readonly _manager: EntityManager
+        private readonly projectRepository: ProjectRepository
     ) {}
 
     async createProject(data: CreateProjectDto): Promise<Project> {
-        let project = await this.projectRepository.createProject(data);
+        const project = new Project();
+        Object.assign(project, data);
+        const createdProject = await this.projectRepository.createProject(project);
         if (data.admin_uuids && data.admin_uuids.length > 0) {
-            project.admin_users = await this._manager.find(User, {
-                where: { user_uuid: In(data.admin_uuids) }
-            });
-            project = await this.projectRepository.createProject(project);
+            return await this.projectRepository.addAdminUsersToProject(createdProject, data.admin_uuids);
         }
-        return project;
+        return createdProject;
     }
     
     async getProject(projectUuid: string): Promise<Project> {
@@ -39,8 +35,7 @@ export class ProjectService {
         if (!project) throw new NotFoundException('Project not found.');
         if (data.block_uuid) delete data.block_uuid; // block_uuid 수정되지 않도록
         Object.assign(project, data);
-        await this.projectRepository.updateProject(project);
-        return project;
+        return await this.projectRepository.updateProject(project);
     }
 
     async deleteProject(projectUuid: string): Promise<void> {
