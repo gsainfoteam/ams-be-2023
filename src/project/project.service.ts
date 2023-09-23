@@ -24,7 +24,6 @@ export class ProjectService {
         return project;
     }
     
-    
     async getProject(projectUuid: string): Promise<Project> {
         const project = await this.projectRepository.getProject(projectUuid);
         if (!project) throw new NotFoundException('Project not found.');
@@ -38,6 +37,7 @@ export class ProjectService {
     async updateProject(projectUuid: string, data: UpdateProjectDto): Promise<Project> {
         const project = await this.projectRepository.getProject(projectUuid);
         if (!project) throw new NotFoundException('Project not found.');
+        if (data.block_uuid) delete data.block_uuid; // block_uuid 수정되지 않도록
         Object.assign(project, data);
         await this.projectRepository.updateProject(project);
         return project;
