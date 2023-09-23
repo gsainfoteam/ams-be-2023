@@ -16,7 +16,7 @@ export class ProjectRepository {
     async getProject(projectUuid: string): Promise<Project | null> {
         return await this.projectManager.findOne(Project, {
             where: { project_uuid: projectUuid },
-            relations: ['admin_users']  // 관리자 정보를 포함하여 가져오도록 설정
+            relations: ['admin_users']
         });
     }
 
@@ -24,9 +24,8 @@ export class ProjectRepository {
         return await this.projectManager.find(Project, { where: { start_date: LessThanOrEqual(date), end_date: MoreThanOrEqual(date) } });
     }
 
-    async updateProject(projectUuid: string, data: any): Promise<Project | null> {
-        await this.projectManager.update(Project, projectUuid, data);
-        return this.getProject(projectUuid);
+    async updateProject(project: Project): Promise<Project> {
+        return await this.projectManager.save(Project, project);
     }
 
     async deleteProject(projectUuid: string): Promise<void> {

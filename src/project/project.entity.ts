@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, PrimaryColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, PrimaryColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
 import { User } from '../user/user.entity';
 
 
@@ -19,8 +19,8 @@ export class Project {
     @Column()
     image_url: string;
 
-    @Column({ type: 'int' })
-    recruit_num: number;
+    @Column({ type: 'int', nullable: true })
+    recruit_maximum?: number;
 
     @Column({ type: 'boolean' })
     state: boolean;
@@ -31,4 +31,13 @@ export class Project {
     @ManyToMany(() => User)
     @JoinTable({ name: 'project_admin_users' })
     admin_users: User[];
+
+    @CreateDateColumn()
+    created_at: Date;
+
+    @UpdateDateColumn()
+    updated_at: Date;
+
+    @DeleteDateColumn()
+    deleted_at: Date;
 }
