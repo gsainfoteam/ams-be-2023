@@ -2,7 +2,7 @@ import { IsArray, IsNumber } from 'class-validator';
 
 export class CreateBlockOptionDto {
   @IsArray()
-  option: string[];
+  options: string[];
 
   @IsNumber()
   max: number;
