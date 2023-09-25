@@ -8,3 +8,8 @@ export class CreateBlockDto {
   @IsString()
   block_data: string;
 }
+
+export class UpdateBlockDto {
+  @IsString()
+  block_data: string;
+}

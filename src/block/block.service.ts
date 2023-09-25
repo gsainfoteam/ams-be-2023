@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { BlockRepository } from './block.repository';
-import { CreateBlockDto } from './dto/block.dto';
+import { CreateBlockDto, UpdateBlockDto } from './dto/block.dto';
 import { DataSource, EntityManager } from 'typeorm';
 import { Block } from './entity/block.entity';
 
@@ -30,5 +30,24 @@ export class BlockService {
         );
       },
     );
+  }
+
+  async updateBlockData(
+    blockUuid: string,
+    updateBlockData: UpdateBlockDto,
+  ): Promise<void> {
+    await this.dataSource.transaction(async (entityManager: EntityManager) => {
+      await this.blockRepository.updateBlockData(
+        entityManager,
+        blockUuid,
+        updateBlockData,
+      );
+    });
+  }
+
+  async deleteBlock(blockUuid: string): Promise<void> {
+    await this.dataSource.transaction(async (entityManager: EntityManager) => {
+      await this.blockRepository.deleteBlock(entityManager, blockUuid);
+    });
   }
 }
