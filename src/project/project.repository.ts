@@ -28,8 +28,8 @@ export class ProjectRepository {
         return await this.projectManager.save(Project, project);
     }
 
-    async deleteProject(projectUuid: string): Promise<void> {
-        await this.projectManager.delete(Project, projectUuid);
+    async softDeleteProject(projectUuid: string): Promise<void> {
+        await this.projectManager.softDelete(Project, projectUuid);
     }
 
     async addAdminUsersToProject(project: Project, adminUuids: string[]): Promise<Project> {
