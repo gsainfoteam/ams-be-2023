@@ -1,11 +1,14 @@
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   OneToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { BlockOption } from '../../block-option/entity/block-option.entity';
+import { BlockType } from '../type/block.enum';
 
 @Entity()
 export class Block {
@@ -13,18 +16,21 @@ export class Block {
   block_uuid: string;
 
   @Column()
-  block_type: string;
+  block_type: BlockType;
 
   @Column()
   block_data: string;
 
+  @Column({ default: false })
+  mandatory: boolean;
+
   @CreateDateColumn()
   created_at: Date;
 
-  @Column({ nullable: true })
+  @UpdateDateColumn({ nullable: true })
   updated_at: Date;
 
-  @Column({ nullable: true })
+  @DeleteDateColumn({ nullable: true })
   deleted_at: Date;
 
   @OneToOne(() => BlockOption, (blockOption) => blockOption.block, {
