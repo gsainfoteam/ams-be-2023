@@ -14,12 +14,12 @@ export class BlockOption {
   block_option_uuid: string;
 
   @Column({ type: 'json' })
-  option: string[];
+  options: string[];
 
-  @Column()
+  @Column({ default: 1 })
   max: number;
 
-  @Column()
+  @Column({ default: 1 })
   min: number;
 
   @CreateDateColumn()
