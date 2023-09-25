@@ -22,10 +22,6 @@ export class UpdateProjectDto {
     recruit_maximum?: number;
 
     @IsOptional()
-    @IsBoolean()
-    state?: boolean;
-
-    @IsOptional()
     @IsArray()
     @IsString({ each: true })
     block_uuid?: string[];

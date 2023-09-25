@@ -22,9 +22,6 @@ export class Project {
     @Column({ type: 'int', nullable: true })
     recruit_maximum?: number;
 
-    @Column({ type: 'boolean' })
-    state: boolean;
-
     @Column({ type: 'json' })
     block_uuid: string[];
 

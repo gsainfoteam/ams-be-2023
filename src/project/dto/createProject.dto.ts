@@ -1,4 +1,4 @@
-import { IsString, IsDate, IsInt, IsBoolean, IsArray, IsOptional, IsNotEmpty, IsDateString } from 'class-validator';
+import { IsString, IsInt, IsArray, IsOptional, IsNotEmpty, IsDateString } from 'class-validator';
 
 export class CreateProjectDto {
     @IsNotEmpty()
@@ -20,10 +20,6 @@ export class CreateProjectDto {
     @IsOptional()
     @IsInt()
     recruit_maximum?: number;
-
-    @IsNotEmpty()
-    @IsBoolean()
-    state: boolean;
 
     @IsNotEmpty()
     @IsArray()
