@@ -40,4 +40,13 @@ export class BlockOptionService {
       },
     );
   }
+
+  async deleteBlockOption(blockOptionUuid: string): Promise<void> {
+    await this.dataSource.transaction(async (entityManager: EntityManager) => {
+      await this.blockOptionRepository.deleteBlockOption(
+        entityManager,
+        blockOptionUuid,
+      );
+    });
+  }
 }

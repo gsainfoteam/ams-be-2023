@@ -20,4 +20,13 @@ export class BlockOptionRepository {
 
     return await transactionEntityManager.save(BlockOption, newBlockOption);
   }
+
+  async deleteBlockOption(
+    transactionEntityManager: EntityManager,
+    blockOptionUuid: string,
+  ): Promise<void> {
+    await transactionEntityManager.softDelete(BlockOption, {
+      block_option_uuid: blockOptionUuid,
+    });
+  }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Post, Query } from '@nestjs/common';
 import { BlockOptionService } from './block-option.service';
 import { CreateBlockOptionDto } from './dto/block-option.dto';
 import { BlockOption } from './entity/block-option.entity';
@@ -16,5 +16,12 @@ export class BlockOptionController {
       blockUuid,
       createBlockOptionDto,
     );
+  }
+
+  @Delete()
+  async deleteBlockOption(
+    @Query('block_option_uuid') blockOptionUuid: string,
+  ): Promise<void> {
+    await this.blockOptionService.deleteBlockOption(blockOptionUuid);
   }
 }

@@ -1,6 +1,7 @@
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   OneToOne,
@@ -24,6 +25,9 @@ export class BlockOption {
 
   @CreateDateColumn()
   created_at: Date;
+
+  @DeleteDateColumn()
+  deleted_at: Date;
 
   @OneToOne(() => Block, (block) => block.block_uuid, {
     onDelete: 'CASCADE',
