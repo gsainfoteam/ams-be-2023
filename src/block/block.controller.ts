@@ -8,9 +8,8 @@ export class BlockController {
   constructor(private readonly blockService: BlockService) {}
 
   @Post()
-  async createBlock(@Body() createBlockDto: CreateBlockDto): Promise<any> {
-    await this.blockService.createBlock(createBlockDto);
-    return { message: 'created successfully' };
+  async createBlock(@Body() createBlockDto: CreateBlockDto): Promise<Block> {
+    return await this.blockService.createBlock(createBlockDto);
   }
 
   @Get()

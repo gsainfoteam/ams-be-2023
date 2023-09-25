@@ -10,10 +10,15 @@ export class BlockService {
     private readonly blockRepository: BlockRepository,
     private dataSource: DataSource,
   ) {}
-  async createBlock(createBlockDto: CreateBlockDto): Promise<void> {
-    await this.dataSource.transaction(async (entityManager: EntityManager) => {
-      await this.blockRepository.createBlock(entityManager, createBlockDto);
-    });
+  async createBlock(createBlockDto: CreateBlockDto): Promise<Block> {
+    return await this.dataSource.transaction(
+      async (entityManager: EntityManager) => {
+        return await this.blockRepository.createBlock(
+          entityManager,
+          createBlockDto,
+        );
+      },
+    );
   }
 
   async findBlockWithBlockOption(blockUuid: string): Promise<Block | null> {

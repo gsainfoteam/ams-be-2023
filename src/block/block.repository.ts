@@ -8,13 +8,13 @@ export class BlockRepository {
   async createBlock(
     transactionEntityManager: EntityManager,
     createBlockDto: CreateBlockDto,
-  ): Promise<void> {
+  ): Promise<Block> {
     const newBlock = new Block();
 
     newBlock.block_type = createBlockDto.block_type;
     newBlock.block_data = createBlockDto.block_data;
 
-    await transactionEntityManager.save(Block, newBlock);
+    return await transactionEntityManager.save(Block, newBlock);
   }
 
   async findBlockByBlockUuid(
