@@ -4,6 +4,7 @@ import { CreateBlockDto } from '../block/dto/block.dto';
 import { DataSource, EntityManager } from 'typeorm';
 import { CreateBlockOptionDto } from './dto/block-option.dto';
 import { BlockRepository } from '../block/block.repository';
+import { BlockOption } from './entity/block-option.entity';
 
 @Injectable()
 export class BlockOptionService {
@@ -16,22 +17,27 @@ export class BlockOptionService {
   async createBlockOption(
     blockUuid: string,
     createBlockOptionDto: CreateBlockOptionDto,
-  ): Promise<void> {
-    await this.dataSource.transaction(async (entityManager: EntityManager) => {
-      const block = await this.blockRepository.findBlockByBlockUuid(
-        entityManager,
-        blockUuid,
-      );
+  ): Promise<BlockOption> {
+    return await this.dataSource.transaction(
+      async (entityManager: EntityManager) => {
+        const block = await this.blockRepository.findBlockByBlockUuid(
+          entityManager,
+          blockUuid,
+        );
 
-      if (!block) {
-        throw new HttpException('Block does not exist', HttpStatus.BAD_REQUEST);
-      }
+        if (!block) {
+          throw new HttpException(
+            'Block does not exist',
+            HttpStatus.BAD_REQUEST,
+          );
+        }
 
-      await this.blockOptionRepository.createBlockOptions(
-        entityManager,
-        block,
-        createBlockOptionDto,
-      );
-    });
+        return await this.blockOptionRepository.createBlockOptions(
+          entityManager,
+          block,
+          createBlockOptionDto,
+        );
+      },
+    );
   }
 }

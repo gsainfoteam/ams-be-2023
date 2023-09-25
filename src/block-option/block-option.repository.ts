@@ -10,14 +10,14 @@ export class BlockOptionRepository {
     transactionEntityManager: EntityManager,
     block: Block,
     createBlockOptionDto: CreateBlockOptionDto,
-  ): Promise<void> {
+  ): Promise<BlockOption> {
     const newBlockOption = new BlockOption();
 
-    newBlockOption.option = createBlockOptionDto.option;
+    newBlockOption.options = createBlockOptionDto.options;
     newBlockOption.max = createBlockOptionDto.max;
     newBlockOption.min = createBlockOptionDto.min;
     newBlockOption.block = block;
 
-    await transactionEntityManager.save(BlockOption, newBlockOption);
+    return await transactionEntityManager.save(BlockOption, newBlockOption);
   }
 }

@@ -1,6 +1,7 @@
 import { Body, Controller, Post, Query } from '@nestjs/common';
 import { BlockOptionService } from './block-option.service';
 import { CreateBlockOptionDto } from './dto/block-option.dto';
+import { BlockOption } from './entity/block-option.entity';
 
 @Controller('v1/block/option')
 export class BlockOptionController {
@@ -10,11 +11,10 @@ export class BlockOptionController {
   async createBlockOption(
     @Query('block_uuid') blockUuid: string,
     @Body() createBlockOptionDto: CreateBlockOptionDto,
-  ): Promise<any> {
-    await this.blockOptionService.createBlockOption(
+  ): Promise<BlockOption> {
+    return await this.blockOptionService.createBlockOption(
       blockUuid,
       createBlockOptionDto,
     );
-    return { message: 'created successfully' };
   }
 }
