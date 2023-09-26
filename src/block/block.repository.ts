@@ -20,13 +20,18 @@ export class BlockRepository {
   async updateBlockData(
     transactionEntityManager: EntityManager,
     blockUuid: string,
-    updateBlockData: UpdateBlockDto,
-  ): Promise<void> {
+    updateBlockDto: UpdateBlockDto,
+  ): Promise<Block | null> {
     await transactionEntityManager.update(
       Block,
       { block_uuid: blockUuid },
-      { block_data: updateBlockData.block_data },
+      {
+        block_data: updateBlockDto.block_data,
+        mandatory: updateBlockDto.mandatory,
+      },
     );
+
+    return await this.findBlockByBlockUuid(transactionEntityManager, blockUuid);
   }
 
   async findBlockByBlockUuid(
@@ -52,8 +57,10 @@ export class BlockRepository {
     transactionEntityManager: EntityManager,
     blockUuid: string,
   ): Promise<void> {
-    await transactionEntityManager.softDelete(Block, {
-      block_uuid: blockUuid,
-    });
+    const blockWithBlockOptions = await this.findBlockWithBlockOption(
+      transactionEntityManager,
+      blockUuid,
+    );
+    await transactionEntityManager.softRemove(blockWithBlockOptions);
   }
 }
