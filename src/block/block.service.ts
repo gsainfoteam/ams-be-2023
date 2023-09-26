@@ -34,15 +34,17 @@ export class BlockService {
 
   async updateBlockData(
     blockUuid: string,
-    updateBlockData: UpdateBlockDto,
-  ): Promise<void> {
-    await this.dataSource.transaction(async (entityManager: EntityManager) => {
-      await this.blockRepository.updateBlockData(
-        entityManager,
-        blockUuid,
-        updateBlockData,
-      );
-    });
+    updateBlockDto: UpdateBlockDto,
+  ): Promise<Block | null> {
+    return await this.dataSource.transaction(
+      async (entityManager: EntityManager) => {
+        return await this.blockRepository.updateBlockData(
+          entityManager,
+          blockUuid,
+          updateBlockDto,
+        );
+      },
+    );
   }
 
   async deleteBlock(blockUuid: string): Promise<void> {
