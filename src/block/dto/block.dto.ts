@@ -1,4 +1,4 @@
-import { IsEnum, IsString } from 'class-validator';
+import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator';
 import { BlockType } from '../type/block.enum';
 
 export class CreateBlockDto {
@@ -11,5 +11,10 @@ export class CreateBlockDto {
 
 export class UpdateBlockDto {
   @IsString()
+  @IsOptional()
   block_data: string;
+
+  @IsBoolean()
+  @IsOptional()
+  mandatory: boolean;
 }
