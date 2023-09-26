@@ -3,9 +3,9 @@ import {
   Controller,
   Delete,
   Get,
+  Param,
+  Patch,
   Post,
-  Put,
-  Query,
 } from '@nestjs/common';
 import { BlockService } from './block.service';
 import { CreateBlockDto, UpdateBlockDto } from './dto/block.dto';
@@ -20,23 +20,24 @@ export class BlockController {
     return await this.blockService.createBlock(createBlockDto);
   }
 
-  @Get()
+  @Get(':block_uuid')
   async findBlockWithOption(
-    @Query('block_uuid') blockUuid: string,
+    @Param('block_uuid') blockUuid: string,
   ): Promise<Block | null> {
     return await this.blockService.findBlockWithBlockOption(blockUuid);
   }
 
-  @Put()
+  @Patch(':block_uuid')
   async updateBlock(
-    @Query('block_uuid') blockUuid: string,
-    @Body() updateBlockData: UpdateBlockDto,
-  ): Promise<void> {
-    await this.blockService.updateBlockData(blockUuid, updateBlockData);
+    @Param('block_uuid') blockUuid: string,
+    @Body() updateBlockDto: UpdateBlockDto,
+  ): Promise<Block | null> {
+    return await this.blockService.updateBlockData(blockUuid, updateBlockDto);
   }
 
-  @Delete()
-  async deleteBlock(@Query('block_uuid') blockUuid: string): Promise<void> {
+  @Delete(':block_uuid')
+  async deleteBlock(@Param('block_uuid') blockUuid: string) {
     await this.blockService.deleteBlock(blockUuid);
+    return { message: 'OK' };
   }
 }
