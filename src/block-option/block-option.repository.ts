@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
-import { CreateBlockOptionDto } from './dto/block-option.dto';
+import {
+  CreateBlockOptionDto,
+  UpdateBlockOptionDto,
+} from './dto/block-option.dto';
 import { BlockOption } from './entity/block-option.entity';
 import { Block } from '../block/entity/block.entity';
 
@@ -19,6 +22,37 @@ export class BlockOptionRepository {
     newBlockOption.block = block;
 
     return await transactionEntityManager.save(BlockOption, newBlockOption);
+  }
+
+  async updateBlockOption(
+    transactionEntityManager: EntityManager,
+    blockOptionUuid: string,
+    updateBlockOptionDto: UpdateBlockOptionDto,
+  ): Promise<BlockOption | null> {
+    await transactionEntityManager.update(
+      BlockOption,
+      {
+        block_option_uuid: blockOptionUuid,
+      },
+      {
+        options: updateBlockOptionDto.options,
+        max: updateBlockOptionDto.max,
+        min: updateBlockOptionDto.min,
+      },
+    );
+    return await this.findBlockOptionByUuid(
+      transactionEntityManager,
+      blockOptionUuid,
+    );
+  }
+
+  async findBlockOptionByUuid(
+    transactionEntityManager: EntityManager,
+    blockOptionUuid: string,
+  ): Promise<BlockOption | null> {
+    return await transactionEntityManager.findOne(BlockOption, {
+      where: { block_option_uuid: blockOptionUuid },
+    });
   }
 
   async deleteBlockOption(

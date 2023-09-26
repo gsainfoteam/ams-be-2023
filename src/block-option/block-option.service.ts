@@ -2,7 +2,10 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { BlockOptionRepository } from './block-option.repository';
 import { CreateBlockDto } from '../block/dto/block.dto';
 import { DataSource, EntityManager } from 'typeorm';
-import { CreateBlockOptionDto } from './dto/block-option.dto';
+import {
+  CreateBlockOptionDto,
+  UpdateBlockOptionDto,
+} from './dto/block-option.dto';
 import { BlockRepository } from '../block/block.repository';
 import { BlockOption } from './entity/block-option.entity';
 
@@ -36,6 +39,21 @@ export class BlockOptionService {
           entityManager,
           block,
           createBlockOptionDto,
+        );
+      },
+    );
+  }
+
+  async updateBlockOption(
+    blockOptionUuid: string,
+    updateBlockOptionDto: UpdateBlockOptionDto,
+  ): Promise<BlockOption | null> {
+    return await this.dataSource.transaction(
+      async (entityManager: EntityManager) => {
+        return await this.blockOptionRepository.updateBlockOption(
+          entityManager,
+          blockOptionUuid,
+          updateBlockOptionDto,
         );
       },
     );
