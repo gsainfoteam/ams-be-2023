@@ -12,3 +12,17 @@ export class CreateBlockOptionDto {
   @IsOptional()
   min: number;
 }
+
+export class UpdateBlockOptionDto {
+  @IsArray()
+  @IsOptional()
+  options: string[];
+
+  @IsNumber()
+  @IsOptional()
+  max: number;
+
+  @IsNumber()
+  @IsOptional()
+  min: number;
+}
