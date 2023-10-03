@@ -3,6 +3,8 @@ import { AnswerRepository } from './answer.repository';
 import { ResponseRepository } from '../response/response.repository';
 import { CreateAnswerDto } from './dto/create-answer.dto';
 import { UpdateAnswerDto } from './dto/update-answer.dto';
+import { Response } from '../response/response.entity'
+import { Answer } from './answer.entity';
 
 @Injectable()
 export class AnswerService {
@@ -15,7 +17,6 @@ export class AnswerService {
         const response = await this.responseRepository.createResponse({
             user_uuid: dto.user_uuid,
         });
-
         const answer = await this.answerRepository.createAnswer({
             ...dto,
             response_uuid: response.response_uuid,
@@ -33,6 +34,14 @@ export class AnswerService {
     }
 
     async deleteAnswer(answerUuid: string) {
-        return this.answerRepository.deleteAnswer(answerUuid);
+        const answer = await this.answerRepository.getAnswer(answerUuid);
+        if (!answer) {
+            throw new Error("Answer not found");
+        }
+        const responseUuid = answer.response_uuid;
+        if (responseUuid) {
+            await this.responseRepository.deleteResponse(responseUuid);
+        }
+        await this.answerRepository.deleteAnswer(answerUuid);
     }
 }

@@ -9,4 +9,8 @@ export class ResponseRepository {
     async createResponse(data: any): Promise<Response> {
         return this.entityManager.save(Response, data);
     }
+
+    async deleteResponse(responseUuid: string): Promise<void> {
+        await this.entityManager.delete(Response, responseUuid);
+    }
 }

@@ -1,5 +1,5 @@
 import { Answer } from '../answer/answer.entity';
-import { Entity, PrimaryColumn, Column, CreateDateColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, PrimaryColumn, Column, CreateDateColumn, OneToOne, PrimaryGeneratedColumn, JoinColumn } from 'typeorm';
 
 @Entity()
 export class Response {
@@ -10,6 +10,7 @@ export class Response {
     user_uuid: string;
 
     @OneToOne(() => Answer, (answer) => answer.response)
+    @JoinColumn({ name: 'answer_uuid' })
     answer: Answer;
 
     @CreateDateColumn()

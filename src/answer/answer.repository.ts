@@ -11,6 +11,10 @@ export class AnswerRepository {
         return this.entityManager.save(Answer, data);
     }
 
+    async getAnswer(answerUuid: string): Promise<Answer | null> {
+        return this.entityManager.findOne(Answer, { where: { answer_uuid: answerUuid }, relations: ["response"] });
+    }
+
     async getAnswersByBlockUuid(blockUuid: string): Promise<Answer[]> {
         return this.entityManager.find(Answer, {where: { block_uuid: blockUuid }});
     }
@@ -25,11 +29,9 @@ export class AnswerRepository {
     }
 
     async deleteAnswer(answerUuid: string): Promise<void> {
-        const answer = await this.entityManager.findOne(Answer, { where: { answer_uuid: answerUuid }, relations: ['response'] });
-        if (answer && answer.response) {
-            await this.entityManager.remove(answer.response);
+        const answer = await this.entityManager.findOne(Answer, { where: { answer_uuid: answerUuid } });
+        if (answer) {
+            await this.entityManager.remove(Answer, answer);
         }
-        await this.entityManager.remove(answer);
     }
-    
 }

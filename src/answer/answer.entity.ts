@@ -11,15 +11,15 @@ export class Answer {
     @Column()
     block_uuid: string;
 
-    @OneToOne(() => Response, (response) => response.answer, { cascade: true })
+    @Column()
+    response_uuid: string;
+
+    @OneToOne(() => Response, (response) => response.answer, { cascade: true, onDelete: 'CASCADE' })
     @JoinColumn({ name: 'response_uuid' })
     response: Response;
 
     @CreateDateColumn()
     created_at: Date;
-
-    @Column({ type: 'timestamp', default: null, nullable: true })
-    deleted_at: Date;
 
     @UpdateDateColumn()
     updated_at: Date;
