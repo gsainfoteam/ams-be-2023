@@ -9,7 +9,11 @@ import { catchError, firstValueFrom } from 'rxjs';
 import { HttpService } from '@nestjs/axios';
 import { AxiosError } from 'axios';
 import { DataSource, EntityManager } from 'typeorm';
-import { IdpTokenResponse, UserInfo } from './type/user.type';
+import {
+  AccessTokenResponse,
+  IdpTokenResponse,
+  UserInfo,
+} from './type/user.type';
 
 @Injectable()
 export class UserService {
@@ -23,23 +27,40 @@ export class UserService {
     this.idpUrl = this.configService.get<string>('IDP_URL')!;
   }
 
-  async loginByIdP(authCode: string): Promise<void> {
-    await this.dataSource.transaction(async (entityManager: EntityManager) => {
-      const tokens = await this.getTokensFromIdP(authCode);
-      const userInfo = await this.getUserInfoFromIdP(tokens.access_token);
+  async loginByIdP(authCode: string): Promise<IdpTokenResponse> {
+    return await this.dataSource.transaction(
+      async (entityManager: EntityManager) => {
+        const tokens = await this.tokensFromIdP(authCode);
+        console.log(tokens);
+        const userInfo = await this.userInfoFromIdP(tokens.access_token);
 
-      const user = await this.userRepository.findUserByUuid(
-        entityManager,
-        userInfo.user_uuid,
-      );
+        const user = await this.userRepository.findUserByUuid(
+          entityManager,
+          userInfo.user_uuid,
+        );
 
-      if (!user) {
-        await this.userRepository.registerUser(entityManager, userInfo);
-      }
-    });
+        if (!user) {
+          await this.userRepository.registerUser(entityManager, userInfo);
+        }
+
+        return {
+          access_token: tokens.access_token,
+          refresh_token: tokens.refresh_token,
+        };
+      },
+    );
   }
 
-  async getTokensFromIdP(authCode: string) {
+  async refresh(refreshToken: string): Promise<AccessTokenResponse> {
+    return await this.refreshTokenFromIdP(refreshToken);
+  }
+
+  async logout(accessToken: string, refreshToken: string): Promise<void> {
+    await this.revokeTokenFromIdp(accessToken);
+    await this.revokeTokenFromIdp(refreshToken);
+  }
+
+  async tokensFromIdP(authCode: string) {
     const url = this.idpUrl + '/token';
     const tokenResponse = await firstValueFrom(
       this.httpService
@@ -71,7 +92,7 @@ export class UserService {
     return tokenResponse.data;
   }
 
-  async getUserInfoFromIdP(accessToken: string): Promise<UserInfo> {
+  async userInfoFromIdP(accessToken: string): Promise<UserInfo> {
     const url = this.idpUrl + '/userinfo';
 
     const userInfo = await firstValueFrom(
@@ -88,5 +109,52 @@ export class UserService {
     );
 
     return userInfo.data;
+  }
+
+  async refreshTokenFromIdP(refreshToken: string): Promise<IdpTokenResponse> {
+    const url = this.idpUrl + '/token';
+    const refreshResponse = await firstValueFrom(
+      this.httpService
+        .post<IdpTokenResponse>(
+          url,
+          {
+            refresh_token: refreshToken,
+            grant_type: 'refresh_token',
+          },
+          {
+            headers: { 'content-type': 'application/x-www-form-urlencoded' },
+            auth: {
+              username: this.configService.get<string>('CLIENT_ID')!,
+              password: this.configService.get<string>('CLIENT_SECRET_KEY')!,
+            },
+          },
+        )
+        .pipe(
+          catchError((err: AxiosError) => {
+            if (err.response?.status === 400) {
+              throw new UnauthorizedException('Invalid refresh token');
+            }
+            throw new InternalServerErrorException('network error');
+          }),
+        ),
+    );
+    return refreshResponse.data;
+  }
+
+  private async revokeTokenFromIdp(token: string) {
+    const url = this.idpUrl + '/revoke';
+    await firstValueFrom(
+      this.httpService.post(
+        url,
+        { token },
+        {
+          headers: { 'content-type': 'application/x-www-form-urlencoded' },
+          auth: {
+            username: this.configService.get<string>('CLIENT_ID')!,
+            password: this.configService.get<string>('CLIENT_SECRET_KEY')!,
+          },
+        },
+      ),
+    );
   }
 }
