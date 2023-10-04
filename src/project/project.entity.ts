@@ -16,8 +16,8 @@ export class Project {
     @Column({ type: 'date' })
     end_date: Date;
 
-    @Column()
-    image_url: string;
+    @Column({ nullable: true })
+    image_url?: string;
 
     @Column({ type: 'int', nullable: true })
     recruit_maximum?: number;

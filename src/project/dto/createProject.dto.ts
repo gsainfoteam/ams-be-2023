@@ -13,9 +13,9 @@ export class CreateProjectDto {
     @IsDateString()
     end_date: Date;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsString()
-    image_url: string;
+    image_url?: string;
 
     @IsOptional()
     @IsInt()
