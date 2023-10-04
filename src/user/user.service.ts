@@ -31,7 +31,7 @@ export class UserService {
     return await this.dataSource.transaction(
       async (entityManager: EntityManager) => {
         const tokens = await this.tokensFromIdP(authCode);
-        console.log(tokens);
+
         const userInfo = await this.userInfoFromIdP(tokens.access_token);
 
         const user = await this.userRepository.findUserByUuid(
