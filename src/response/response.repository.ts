@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 import { Response } from './response.entity';
+import { Answer } from 'src/answer/answer.entity';
 
 @Injectable()
 export class ResponseRepository {
@@ -10,7 +11,23 @@ export class ResponseRepository {
         return this.entityManager.save(Response, data);
     }
 
-    async deleteResponse(responseUuid: string): Promise<void> {
-        await this.entityManager.delete(Response, responseUuid);
+    async findOne(data: any): Promise<Response | null> {
+        return this.entityManager.findOne(Response, data);
     }
+    
+    async deleteResponse(responseUuid: string): Promise<void> {
+        const response = await this.entityManager.findOne(Response, { where: { response_uuid: responseUuid }, relations: ["answers"] });
+        if (response) {
+            for (const answer of response.answers) {
+                await this.entityManager.remove(Answer, answer);
+            }
+            await this.entityManager.remove(Response, response);
+        }
+    }
+
+    async updateResponse(response: Response): Promise<Response> {
+        return this.entityManager.save(Response, response);
+    }
+    
+    
 }

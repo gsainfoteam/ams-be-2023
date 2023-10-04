@@ -1,5 +1,5 @@
 import { Answer } from '../answer/answer.entity';
-import { Entity, PrimaryColumn, Column, CreateDateColumn, OneToOne, PrimaryGeneratedColumn, JoinColumn } from 'typeorm';
+import { Entity, PrimaryColumn, Column, CreateDateColumn, OneToOne, PrimaryGeneratedColumn, JoinColumn, OneToMany } from 'typeorm';
 
 @Entity()
 export class Response {
@@ -9,10 +9,10 @@ export class Response {
     @Column()
     user_uuid: string;
 
-    @OneToOne(() => Answer, (answer) => answer.response)
-    @JoinColumn({ name: 'answer_uuid' })
-    answer: Answer;
+    @OneToMany(() => Answer, (answer) => answer.response, { cascade: true, onDelete: 'CASCADE' })
+    answers: Answer[];
 
     @CreateDateColumn()
     created_at: Date;
 }
+

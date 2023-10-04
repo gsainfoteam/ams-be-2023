@@ -1,5 +1,6 @@
-import { Entity, PrimaryColumn, Column, OneToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, PrimaryColumn, Column, OneToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { Response } from '../response/response.entity';
+
 @Entity()
 export class Answer {
     @PrimaryGeneratedColumn('uuid')
@@ -11,11 +12,7 @@ export class Answer {
     @Column()
     block_uuid: string;
 
-    @Column()
-    response_uuid: string;
-
-    @OneToOne(() => Response, (response) => response.answer, { cascade: true, onDelete: 'CASCADE' })
-    @JoinColumn({ name: 'response_uuid' })
+    @ManyToOne(() => Response, (response) => response.answers)
     response: Response;
 
     @CreateDateColumn()
@@ -24,3 +21,4 @@ export class Answer {
     @UpdateDateColumn()
     updated_at: Date;
 }
+

@@ -22,8 +22,8 @@ export class AnswerController {
         return this.answerService.updateAnswer(answerUuid, dto);
     }
 
-    @Delete(':answerUuid')
-    async deleteAnswer(@Param('answerUuid') answerUuid: string) {
-        return this.answerService.deleteAnswer(answerUuid);
+    @Delete('user/:userUuid')
+    async deleteAnswersByUserUuid(@Param('userUuid') userUuid: string) {
+        return this.answerService.deleteAnswersByUserUuid(userUuid);
     }
 }

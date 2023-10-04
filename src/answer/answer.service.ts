@@ -14,17 +14,31 @@ export class AnswerService {
     ) {}
 
     async createAnswer(dto: CreateAnswerDto) {
-        const response = await this.responseRepository.createResponse({
-            user_uuid: dto.user_uuid,
-        });
+        let response = await this.responseRepository.findOne({ where: { user_uuid: dto.user_uuid }, relations: ["answers"] });
+        if (!response) {
+            response = await this.responseRepository.createResponse({ user_uuid: dto.user_uuid });
+            console.log(2)
+        }
         const answer = await this.answerRepository.createAnswer({
             ...dto,
-            response_uuid: response.response_uuid,
+            response: response,
         });
-
-        return answer;
+        if (!response.answers) {
+            response.answers = [];
+        }
+        response.answers.push(answer);
+        await this.responseRepository.updateResponse(response);
+        return {
+            answer_uuid: answer.answer_uuid,
+            answer_data: answer.answer_data,
+            block_uuid: answer.block_uuid,
+            created_at: answer.created_at,
+            updated_at: answer.updated_at
+        };
     }
-
+    
+    
+    
     async getAnswersByBlockUuid(blockUuid: string) {
         return this.answerRepository.getAnswersByBlockUuid(blockUuid);
     }
@@ -33,15 +47,13 @@ export class AnswerService {
         return this.answerRepository.updateAnswer(answerUuid, dto);
     }
 
-    async deleteAnswer(answerUuid: string) {
-        const answer = await this.answerRepository.getAnswer(answerUuid);
-        if (!answer) {
-            throw new Error("Answer not found");
+    async deleteAnswersByUserUuid(userUuid: string): Promise<void> {
+        const response = await this.responseRepository.findOne({ where: { user_uuid: userUuid } });
+        if (response) {
+            await this.responseRepository.deleteResponse(response.response_uuid);
+        } else {
+            throw new Error("No response found for the provided userUuid");
         }
-        const responseUuid = answer.response_uuid;
-        if (responseUuid) {
-            await this.responseRepository.deleteResponse(responseUuid);
-        }
-        await this.answerRepository.deleteAnswer(answerUuid);
     }
+    
 }
