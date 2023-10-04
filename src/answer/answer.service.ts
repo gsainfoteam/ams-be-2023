@@ -37,7 +37,9 @@ export class AnswerService {
         };
     }
     
-    
+    async getAnswersByUserUuid(userUuid: string): Promise<Answer[]> {
+        return this.responseRepository.getAnswersByUserUuid(userUuid);
+    }
     
     async getAnswersByBlockUuid(blockUuid: string) {
         return this.answerRepository.getAnswersByBlockUuid(blockUuid);

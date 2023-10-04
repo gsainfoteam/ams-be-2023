@@ -29,5 +29,12 @@ export class ResponseRepository {
         return this.entityManager.save(Response, response);
     }
     
+    async getAnswersByUserUuid(userUuid: string): Promise<Answer[]> {
+        const response = await this.entityManager.findOne(Response, { where: { user_uuid: userUuid }, relations: ["answers"] });
+        if (!response) {
+            throw new Error("No response found for the given userUuid");
+        }
+        return response.answers;
+    }
     
 }

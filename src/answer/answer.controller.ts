@@ -12,6 +12,11 @@ export class AnswerController {
         return this.answerService.createAnswer(dto);
     }
 
+    @Get('user/:userUuid')
+    async getAnswersByUserUuid(@Param('userUuid') userUuid: string) {
+        return this.answerService.getAnswersByUserUuid(userUuid);
+    }
+
     @Get('block/:blockUuid')
     async getAnswersByBlockUuid(@Param('blockUuid') blockUuid: string) {
         return this.answerService.getAnswersByBlockUuid(blockUuid);
