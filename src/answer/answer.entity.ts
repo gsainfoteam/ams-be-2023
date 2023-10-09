@@ -12,7 +12,7 @@ export class Answer {
     @Column()
     block_uuid: string;
 
-    @ManyToOne(() => Response, (response) => response.answers)
+    @ManyToOne(() => Response, (response) => response.answers, { onDelete: 'CASCADE' })
     response: Response;
 
     @CreateDateColumn()

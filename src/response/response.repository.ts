@@ -27,11 +27,8 @@ export class ResponseRepository {
     }
 
     async deleteResponse(responseUuid: string): Promise<void> {
-        const response = await this.entityManager.findOne(Response, { where: { response_uuid: responseUuid }, relations: ["answers"] });
+        const response = await this.entityManager.findOne(Response, { where: { response_uuid: responseUuid } });
         if (response) {
-            for (const answer of response.answers) {
-                await this.entityManager.remove(Answer, answer);
-            }
             await this.entityManager.remove(Response, response);
         }
     }

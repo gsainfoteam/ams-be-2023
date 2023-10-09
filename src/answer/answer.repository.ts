@@ -29,9 +29,7 @@ export class AnswerRepository {
     }
 
     async deleteAnswer(answerUuid: string): Promise<void> {
-        const answer = await this.entityManager.findOne(Answer, { where: { answer_uuid: answerUuid } });
-        if (answer) {
-            await this.entityManager.remove(Answer, answer);
-        }
+        await this.entityManager.delete(Answer, { answer_uuid: answerUuid });
     }
+    
 }

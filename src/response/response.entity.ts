@@ -9,7 +9,7 @@ export class Response {
     @Column()
     user_uuid: string;
 
-    @OneToMany(() => Answer, (answer) => answer.response, { cascade: true, onDelete: 'CASCADE' })
+    @OneToMany(() => Answer, (answer) => answer.response, { cascade: true })
     answers: Answer[];
 
     @CreateDateColumn()
