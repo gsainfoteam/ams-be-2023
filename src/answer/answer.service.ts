@@ -14,18 +14,11 @@ export class AnswerService {
     ) {}
 
     async createAnswer(dto: CreateAnswerDto) {
-        let response = await this.responseRepository.findOne({ where: { user_uuid: dto.user_uuid }, relations: ["answers"] });
-        if (!response) {
-            response = await this.responseRepository.createResponse({ user_uuid: dto.user_uuid });
-            console.log(2)
-        }
+        const response = await this.responseRepository.findOrCreateResponse({ where: { user_uuid: dto.user_uuid }, relations: ["answers"] });
         const answer = await this.answerRepository.createAnswer({
             ...dto,
             response: response,
         });
-        if (!response.answers) {
-            response.answers = [];
-        }
         response.answers.push(answer);
         await this.responseRepository.updateResponse(response);
         return {

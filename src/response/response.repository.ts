@@ -14,7 +14,18 @@ export class ResponseRepository {
     async findOne(data: any): Promise<Response | null> {
         return this.entityManager.findOne(Response, data);
     }
-    
+
+    async findOrCreateResponse(data: any): Promise<Response> {
+        let response = await this.findOne(data);
+        if (!response) {
+            response = await this.createResponse({ 
+                user_uuid: data.where.user_uuid,
+                answers: [] 
+            });
+        }
+        return response;
+    }
+
     async deleteResponse(responseUuid: string): Promise<void> {
         const response = await this.entityManager.findOne(Response, { where: { response_uuid: responseUuid }, relations: ["answers"] });
         if (response) {
