@@ -5,20 +5,26 @@ import { User } from './entity/user.entity';
 
 @Injectable()
 export class UserRepository {
-  async registerUser(
+  async findOrRegister(
     transactionManager: EntityManager,
     userInfo: UserInfo,
   ): Promise<void> {
-    const newUser = new User();
-    console.log(userInfo);
+    const user = await this.findUserByUuid(
+      transactionManager,
+      userInfo.user_uuid,
+    );
 
-    newUser.user_uuid = userInfo.user_uuid;
-    newUser.user_name = userInfo.user_name;
-    newUser.student_number = userInfo.student_id;
-    newUser.user_phone_number = userInfo.user_phone_number;
-    newUser.user_email_id = userInfo.user_email_id;
+    if (!user) {
+      const newUser = new User();
 
-    await transactionManager.save(newUser);
+      newUser.user_uuid = userInfo.user_uuid;
+      newUser.user_name = userInfo.user_name;
+      newUser.student_number = userInfo.student_id;
+      newUser.user_phone_number = userInfo.user_phone_number;
+      newUser.user_email_id = userInfo.user_email_id;
+
+      await transactionManager.save(newUser);
+    }
   }
 
   async findUserByUuid(

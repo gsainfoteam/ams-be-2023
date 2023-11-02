@@ -34,14 +34,7 @@ export class UserService {
 
         const userInfo = await this.userInfoFromIdP(tokens.access_token);
 
-        const user = await this.userRepository.findUserByUuid(
-          entityManager,
-          userInfo.user_uuid,
-        );
-
-        if (!user) {
-          await this.userRepository.registerUser(entityManager, userInfo);
-        }
+        await this.userRepository.findOrRegister(entityManager, userInfo);
 
         return {
           access_token: tokens.access_token,
