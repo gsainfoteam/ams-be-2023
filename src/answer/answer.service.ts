@@ -14,7 +14,8 @@ export class AnswerService {
     ) {}
 
     async createAnswer(dto: CreateAnswerDto) {
-        const response = await this.responseRepository.findOrCreateResponse({ where: { user_uuid: dto.user_uuid }, relations: ["answers"] });
+        const { user_uuid, project_uuid } = dto;
+        const response = await this.responseRepository.findOrCreateResponse(user_uuid, project_uuid);
         const answer = await this.answerRepository.createAnswer({
             ...dto,
             response: response,
@@ -30,8 +31,8 @@ export class AnswerService {
         };
     }
     
-    async getAnswersByUserUuid(userUuid: string): Promise<Answer[]> {
-        return this.responseRepository.getAnswersByUserUuid(userUuid);
+    async getAnswersByUserUuid(userUuid: string, projectUuid: string): Promise<Answer[]> {
+        return this.responseRepository.getAnswersByUserUuid(userUuid, projectUuid);
     }
     
     async getAnswersByBlockUuid(blockUuid: string) {
@@ -42,13 +43,38 @@ export class AnswerService {
         return this.answerRepository.updateAnswer(answerUuid, dto);
     }
 
-    async deleteAnswersByUserUuid(userUuid: string): Promise<void> {
-        const response = await this.responseRepository.findOne({ where: { user_uuid: userUuid } });
-        if (response) {
-            await this.responseRepository.deleteResponse(response.response_uuid);
-        } else {
-            throw new Error("No response found for the provided userUuid");
-        }
+    async deleteAnswersByUserUuid(userUuid: string, projectUuid: string): Promise<void> {
+        await this.responseRepository.deleteResponse(userUuid, projectUuid);
     }
     
+    async getResponseCountByProjectAndDate(projectUuid: string, date: string): Promise<{ response_num: number }> {
+        const count = await this.responseRepository.countResponsesByProjectAndDate(projectUuid, date);
+        return { response_num: count };
+    }
+    
+    async getTodayYesterdayResponseCounts(projectUuid: string): Promise<{ today_count: number, yesterday_count: number, difference: number }> {
+        const todayKST = getKSTDate();
+        const yesterdayKST = new Date(todayKST.getTime() - (3600000 * 24));
+
+        const todayStr = todayKST.toISOString().split('T')[0];
+        const yesterdayStr = yesterdayKST.toISOString().split('T')[0];
+        const todayCount = await this.responseRepository.countResponsesByProjectAndDate(projectUuid, todayStr);
+        const yesterdayCount = await this.responseRepository.countResponsesByProjectAndDate(projectUuid, yesterdayStr);
+    
+        const difference = todayCount - yesterdayCount;
+    
+        return {
+            today_count: todayCount,
+            yesterday_count: yesterdayCount,
+            difference: difference
+        };
+    }
+
 }
+function getKSTDate() {
+    const now = new Date(); 
+    const utc = now.getTime(); 
+    const kst = new Date(utc + (3600000 * 9)); 
+    return kst;
+}
+

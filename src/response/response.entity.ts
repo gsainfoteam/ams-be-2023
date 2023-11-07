@@ -9,6 +9,9 @@ export class Response {
     @Column()
     user_uuid: string;
 
+    @Column()
+    project_uuid: string;
+
     @OneToMany(() => Answer, (answer) => answer.response, { cascade: true })
     answers: Answer[];
 

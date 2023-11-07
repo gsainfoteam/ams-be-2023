@@ -12,9 +12,12 @@ export class AnswerController {
         return this.answerService.createAnswer(dto);
     }
 
-    @Get('user/:userUuid')
-    async getAnswersByUserUuid(@Param('userUuid') userUuid: string) {
-        return this.answerService.getAnswersByUserUuid(userUuid);
+    @Get(':projectUuid/user/:userUuid')
+    async getAnswersByUserUuid(
+        @Param('userUuid') userUuid: string,
+        @Param('projectUuid') projectUuid: string
+    ) {
+        return this.answerService.getAnswersByUserUuid(userUuid, projectUuid);
     }
 
     @Get('block/:blockUuid')
@@ -27,8 +30,27 @@ export class AnswerController {
         return this.answerService.updateAnswer(answerUuid, dto);
     }
 
-    @Delete('user/:userUuid')
-    async deleteAnswersByUserUuid(@Param('userUuid') userUuid: string) {
-        return this.answerService.deleteAnswersByUserUuid(userUuid);
+    @Delete(':projectUuid/user/:userUuid')
+    async deleteAnswersByUserUuid(
+        @Param('userUuid') userUuid: string,
+        @Param('projectUuid') projectUuid: string
+    ) {
+        return this.answerService.deleteAnswersByUserUuid(userUuid, projectUuid);
     }
+
+    @Get('responsenum/:projectUuid/:date')
+    async getResponseNum(
+        @Param('projectUuid') projectUuid: string,
+        @Param('date') date: string
+    ): Promise<{ response_num: number }> {
+        return this.answerService.getResponseCountByProjectAndDate(projectUuid, date);
+    }
+
+    @Get('responsenum/:projectUuid')
+    async getTodayYesterdayResponseDifference(
+        @Param('projectUuid') projectUuid: string
+    ): Promise<{ today_count: number, yesterday_count: number, difference: number }> {
+        return this.answerService.getTodayYesterdayResponseCounts(projectUuid);
+    }
+
 }
