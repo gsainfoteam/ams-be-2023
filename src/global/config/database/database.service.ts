@@ -2,6 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmOptionsFactory } from '@nestjs/typeorm';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm/dist';
+import { Answer } from 'src/answer/answer.entity';
+import { ApplicationForm } from 'src/application-form/application-form.entity';
+import { NoticeBlock } from 'src/notice-block/notice-block.entity';
+import { Project } from 'src/projects/project.entity';
+import { QuestionChoiceBlock } from 'src/question-choice-block/question-choice-block.entity';
+import { QuestionLongBlock } from 'src/question-long-block/question-long-block.entity';
+import { QuestionShortBlock } from 'src/question-short-block/question-short-block.entity';
+import { TextBlock } from 'src/text-block/text-block.entity';
 
 @Injectable()
 export class MySQLConfigService implements TypeOrmOptionsFactory {
@@ -14,8 +22,10 @@ export class MySQLConfigService implements TypeOrmOptionsFactory {
       port: this.configService.get<number>('MYSQL_DATABASE_PORT'),
       host: this.configService.get<string>('MYSQL_DATABASE_HOST'),
       database: this.configService.get<string>('MYSQL_DATABASE_NAME'),
-      entities: [],
-      synchronize: false,
+      entities: [Project,ApplicationForm,
+        QuestionChoiceBlock,QuestionShortBlock, QuestionLongBlock, TextBlock, NoticeBlock,
+        Answer],
+      synchronize: true,
     };
   }
 }
