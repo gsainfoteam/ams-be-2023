@@ -31,16 +31,16 @@ jobs:
 
       - name: Set version ENV, and commit
         run: |
-          VERSIONS_FILE_PATH=apps/mail/ziggle-backend-stg/versions.env
+          VERSIONS_FILE_PATH=apps/mail/ams-be-2023-stg/versions.env
 
           source $VERSIONS_FILE_PATH
           BACKEND_TAG="${GITHUB_REF_NAME}_${GITHUB_SHA}"
           cat <<EOF > $VERSIONS_FILE_PATH
           BACKEND_TAG="${BACKEND_TAG}"
           EOF
-          git config --local user.email "github-actions+ziggle_be@servers.gistory.me"
-          git config --local user.name "Github-Actions[bot] @ gsainfoteam/ziggle_be"
-          git commit -a -m "mail/ziggle-backend-stg: update version.env to ${GITHUB_SHA::7}"
+          git config --local user.email "github-actions+ams-be-2023@servers.gistory.me"
+          git config --local user.name "Github-Actions[bot] @ gsainfoteam/ams-be-2023"
+          git commit -a -m "mail/ams-be-2023-stg: update version.env to ${GITHUB_SHA::7}"
       - name: Push to infoteam-infra
         uses: ad-m/github-push-action@master
         with:
