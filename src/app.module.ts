@@ -5,6 +5,7 @@ import { MySQLConfigModule } from './global/config/database/database.module';
 import { MySQLConfigService } from './global/config/database/database.service';
 import { ProjectModule } from './project/project.module';
 import { UserModule } from './user/user.module';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -19,5 +20,6 @@ import { UserModule } from './user/user.module';
     ProjectModule,
     UserModule,
   ],
+  controllers: [AppController],
 })
 export class AppModule {}
