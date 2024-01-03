@@ -7,6 +7,9 @@ import { BlockModule } from './block/block.module';
 import { BlockOptionController } from './block-option/block-option.controller';
 import { BlockOptionService } from './block-option/block-option.service';
 import { BlockOptionModule } from './block-option/block-option.module';
+import { ProjectModule } from './project/project.module';
+import { UserModule } from './user/user.module';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -20,6 +23,9 @@ import { BlockOptionModule } from './block-option/block-option.module';
     }),
     BlockModule,
     BlockOptionModule,
+    ProjectModule,
+    UserModule,
   ],
+  controllers: [AppController],
 })
 export class AppModule {}
